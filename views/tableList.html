@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tables List</title>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('/tables')
+                .then(response => response.json())
+                .then(data => {
+                    const tableList = document.getElementById('table-list');
+                    data.tables.forEach(table => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `<a href="/tableRecords/${table}">${table}</a>`;
+                        tableList.appendChild(li);
+                    });
+                })
+                .catch(error => console.error('Error fetching tables:', error));
+        });
+    </script>
+</head>
+<body>
+    <h1>Tables List</h1>
+    <ul id="table-list"></ul>
+</body>
+</html>

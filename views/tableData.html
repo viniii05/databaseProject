@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create New Table</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/newTableForm.css">
+</head>
+<body>
+    <h1>Create New Table</h1>
+    <form id="create-table-form" action="/tableData" method="POST">
+        <input type="text" name="tableName" placeholder="Enter your table name" required>
+
+        <!-- Columns will be added here dynamically -->
+        <div id="columns-container">
+            <div class="column">
+                <input type="text" name="columns[0][name]" placeholder="Enter column name" required>
+                <select name="columns[0][type]">
+                    <option value="INTEGER">INTEGER</option>
+                    <option value="BOOLEAN">BOOLEAN</option>
+                    <option value="STRING">STRING</option>
+                </select>
+            </div>
+        </div>
+
+        <button type="button" id="add-column">Add Another Column</button>
+        <button type="submit">Create New Table</button>
+    </form>
+
+    <script>
+        let columnCount = 1;
+
+        document.getElementById('add-column').addEventListener('click', function() {
+            const columnsContainer = document.getElementById('columns-container');
+            const newColumnDiv = document.createElement('div');
+            newColumnDiv.className = 'column';
+            newColumnDiv.innerHTML = `
+                <input type="text" name="columns[${columnCount}][name]" placeholder="Enter column name" required>
+                <select name="columns[${columnCount}][type]">
+                    <option value="INTEGER">INTEGER</option>
+                    <option value="BOOLEAN">BOOLEAN</option>
+                    <option value="STRING">STRING</option>
+                </select>
+            `;
+            columnsContainer.appendChild(newColumnDiv);
+            columnCount++;
+        });
+    </script>
+</body>
+</html>

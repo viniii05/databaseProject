@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Table</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/create.css">
+</head>
+<body>
+    <h1>Welcome to Database Management</h1>
+    <form action="/tableData" method="get">
+        <button type="submit">Go to Create Table Form</button>
+    </form>
+
+    <!-- List of tables -->
+    <h2>Tables</h2>
+    <ul id="table-list"></ul>
+
+    <!-- Insert Record Form (initially hidden) -->
+    <div id="insert-record-form" style="display: none;">
+        <h2>Insert Record</h2>
+        <form id="record-form" action="/insertRecord" method="POST">
+            <input type="hidden" name="tableName" id="record-table-name">
+            <div id="record-fields"></div>
+            <button type="submit">Insert Record</button>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Fetch the list of tables
+            fetch('/tables')
+                .then(response => response.json())
+                .then(data => {
+                    const tableList = document.getElementById('table-list');
+                    data.tables.forEach(table => {
+                        const li = document.createElement('li');
+                        li.className = 'table-list-item';
+
+                        const tableName = document.createElement('span');
+                        tableName.textContent = table;
+
+                        const insertButton = document.createElement('button');
+                        insertButton.textContent = 'Insert Record';
+                        insertButton.className = 'insert-button';
+                        insertButton.addEventListener('click', function() {
+                            // Show the insert record form and populate it with the table name
+                            document.getElementById('insert-record-form').style.display = 'block';
+                            document.getElementById('record-table-name').value = table;
+                            fetch(`/tableColumns?tableName=${table}`)
+                                .then(response => response.json())
+                                .then(data => {
+                                    const recordFields = document.getElementById('record-fields');
+                                    recordFields.innerHTML = ''; // Clear previous fields
+
+                                    data.columns.forEach(column => {
+                                        const fieldDiv = document.createElement('div');
+                                        fieldDiv.innerHTML = `
+                                            <label>${column.name}:</label>
+                                            <input type="text" name="recordData[${column.name}]" placeholder="Enter ${column.name}" required>
+                                        `;
+                                        recordFields.appendChild(fieldDiv);
+                                    });
+                                });
+                        });
+
+                        li.appendChild(tableName);
+                        li.appendChild(insertButton);
+                        tableList.appendChild(li);
+                    });
+                })
+                .catch(error => console.error('Error fetching tables:', error));
+        });
+    </script>
+</body>
+</html>
